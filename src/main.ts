@@ -6,9 +6,6 @@ import { wordWebOnline } from './adapters/wordwebonline';
 
 export { Lookup };
 
-const adapters = new Map<Lookup.Source, Lookup.SourceAdapter>();
-adapters.set('wordWebOnline', wordWebOnline);
-
 export async function definitions(
   word: string,
   options: {
@@ -16,19 +13,70 @@ export async function definitions(
     source?: Lookup.Source;
     includeRelated?: Lookup.Related[];
   } = {}
-) {
-  const { language, source, includeRelated } = Object.assign(
+): Promise<Lookup.DefinitionsResult> {
+  const resolvedOptions = Object.assign(
     {},
-    { language: 'en', source: 'wordWebOnline', includeRelated: ['antonyms'] },
+    {
+      language: 'en',
+      source: 'wordWebOnline',
+      includeRelated: ['antonyms'],
+    },
     options
   );
 
+  return lookup(word, {
+    type: 'definitions',
+    ...resolvedOptions,
+  }) as Promise<Lookup.DefinitionsResult>;
+}
+
+export async function synonyms(
+  word: string,
+  options: {
+    language?: Lookup.Language;
+    source?: Lookup.Source;
+  } = {}
+): Promise<Lookup.SynonymsResult> {
+  const resolvedOptions = Object.assign(
+    {},
+    {
+      language: 'en',
+      source: 'wordWebOnline',
+    },
+    options
+  );
+
+  return lookup(word, {
+    type: 'synonyms',
+    ...resolvedOptions,
+  }) as Promise<Lookup.SynonymsResult>;
+}
+
+const adapters = new Map<Lookup.Source, Lookup.SourceAdapter>();
+adapters.set('wordWebOnline', wordWebOnline);
+
+async function lookup(
+  word: string,
+  options:
+    | {
+        type: 'definitions';
+        language: Lookup.Language;
+        source: Lookup.Source;
+        includeRelated: Lookup.Related[];
+      }
+    | {
+        type: 'synonyms';
+        language: Lookup.Language;
+        source: Lookup.Source;
+      }
+) {
   word = word.trim();
+
   if (word.length === 0) {
     throw error(Lookup.ErrorType.WORD_EMPTY, 'the given word is empty');
   }
 
-  const sourceAdapter = adapters.get(source);
+  const sourceAdapter = adapters.get(options.source);
 
   if (!sourceAdapter) {
     throw error(
@@ -37,10 +85,12 @@ export async function definitions(
     );
   }
 
-  const url = sourceAdapter.url(word, language);
-  const html = await fetchHtml(url, sourceAdapter);
+  const { language, type } = options;
 
-  if (!sourceAdapter.validate(html, word, language)) {
+  const url = sourceAdapter.url(word, language, type);
+  const html = await fetchHtml(url);
+
+  if (!sourceAdapter.validateSourceResponse(html, word, language, type)) {
     throw error(
       Lookup.ErrorType.NOT_FOUND,
       "fetched source HTML page doesn't match expected, perhaps the source format has changed"
@@ -50,7 +100,14 @@ export async function definitions(
   const $html = cheerio.load(html);
 
   try {
-    return sourceAdapter.getDefinitions($html, word, language, includeRelated);
+    return options.type === 'definitions'
+      ? sourceAdapter.getDefinitions(
+          $html,
+          word,
+          language,
+          options.includeRelated
+        )
+      : sourceAdapter.getSynonyms($html, word, language);
   } catch (err) {
     throw error(
       Lookup.ErrorType.EXTRACTION_FAILED,
@@ -60,19 +117,14 @@ export async function definitions(
   }
 }
 
-async function fetchHtml(url: string, adapter: Lookup.SourceAdapter) {
+async function fetchHtml(url: string) {
   try {
-    if (adapter.fetch) {
-      const html = await adapter.fetch(url);
-      return html.trim();
-    } else {
-      const { data } = await get(url, {
-        headers: {
-          'Content-Type': 'text/html; charset=UTF-8',
-        },
-      });
-      return data.trim();
-    }
+    const { data } = await get(url, {
+      headers: {
+        'Content-Type': 'text/html; charset=UTF-8',
+      },
+    });
+    return data.trim();
   } catch (err) {
     throw error(
       Lookup.ErrorType.SOURCE_REQUEST_FAILED,

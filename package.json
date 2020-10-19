@@ -2,7 +2,7 @@
   "name": "lookup",
   "version": "0.1.0",
   "description": "Lookup definitions and synonyms of words using online sources.",
-  "main": "main.js",
+  "main": "dist/main.js",
   "repository": "https://github.com/JosephusPaye/lookup.git",
   "author": "Josephus Paye II",
   "license": "MIT",

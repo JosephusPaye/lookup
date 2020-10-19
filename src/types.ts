@@ -1,5 +1,10 @@
 export namespace Lookup {
   /**
+   * The type of look up
+   */
+  export type Type = 'definitions' | 'synonyms';
+
+  /**
    * The sources available for looking up words.
    */
   export type Source = 'wordWebOnline';
@@ -127,7 +132,7 @@ export namespace Lookup {
   }
 
   /**
-   * A look up result
+   * A definition result
    */
   export interface DefinitionsResult {
     /**
@@ -188,6 +193,43 @@ export namespace Lookup {
   }
 
   /**
+   * A synonym result
+   */
+  export interface Synonym {
+    /**
+     * The synonym
+     */
+    synonym: string;
+
+    /**
+     * The word with this synonym
+     */
+    word: string;
+
+    /**
+     * The part of speech of the word with this synonym
+     */
+    partOfSpeech: string;
+
+    /**
+     * The definition of the word matching this synonym
+     */
+    definition: string;
+  }
+
+  export interface SynonymsResult {
+    /**
+     * Attribution for where the definitions are from
+     */
+    attribution: string;
+
+    /**
+     * The synonyms found for the given word
+     */
+    synonyms: Synonym[];
+  }
+
+  /**
    * An adapter that provides definitions and synonyms from an online source
    */
   export interface SourceAdapter {
@@ -197,24 +239,24 @@ export namespace Lookup {
     attribution(): string;
 
     /**
-     * Create a URL to look up the given word from the source.
+     * Create a URL to look up definitions of the given word from the source.
      */
-    url(word: string, language: string): string;
-
-    /**
-     * Fetch the HTML source of the given URL.
-     */
-    fetch?(url: string): Promise<string>;
+    url(word: string, language: string, type: Type): string;
 
     /**
      * Verify that the HTML page fetched from the source is as expected.
      * Recommended to look for a unique value in the HTML that indicates
      * a valid definition was returned on the page.
      */
-    validate(html: string, word: string, language: string): boolean;
+    validateSourceResponse(
+      html: string,
+      word: string,
+      language: string,
+      type: Type
+    ): boolean;
 
     /**
-     * Parse the source HTML page to extract meanings using cheerio.
+     * Parse the source HTML page to extract definitions using cheerio.
      */
     getDefinitions(
       $html: cheerio.Root,
@@ -222,5 +264,14 @@ export namespace Lookup {
       language: string,
       includeRelated: Related[]
     ): DefinitionsResult;
+
+    /**
+     * Parse the source HTML page to extract synonyms using cheerio.
+     */
+    getSynonyms(
+      $html: cheerio.Root,
+      word: string,
+      language: string,
+    ): SynonymsResult;
   }
 }

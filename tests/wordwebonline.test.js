@@ -95,48 +95,45 @@ test('wordWebOnline.getDefinitions() result includes expected meanings', () => {
   const $ = cheerio.load(setHtml);
   const { meanings } = wordWebOnline.getDefinitions($, 'set', 'en', []);
 
-  // "set" has 4 distinct meanings: verb, noun, adjective, proper noun
-  assert.is(meanings.length, 4, 'a word can have multiple distinct meanings');
-
-  // Meaning
-  const meaning = meanings[0];
+  assert.ok(meanings.length > 0, '"set" has at least one meaning');
 
   assert.is(
-    meaning.word,
+    meanings[0].word,
     'set',
     'meaning includes word spelt according to meaning'
   );
-  assert.is(meaning.partOfSpeech, 'verb', 'meaning includes part of speech');
+  assert.is(
+    meanings[0].partOfSpeech,
+    'verb',
+    'meaning includes part of speech'
+  );
   assert.equal(
-    meaning.forms,
+    meanings[0].forms,
     ['set', 'setting'],
     'verb meaning includes forms'
   );
   assert.equal(
-    meaning.pronunciation,
+    meanings[0].pronunciation,
     { text: 'set', key: '/e/ egg' },
     'meaning includes pronunciation key without label'
   );
   assert.ok(
-    meaning.definitions.length > 0,
+    meanings[0].definitions.length > 0,
     'meaning includes at least one definition'
   );
 
-  // Definition
-  const definition = meaning.definitions[0];
-
   assert.is(
-    definition.definition,
+    meanings[0].definitions[0].definition,
     'Cause to have a certain (possibly abstract) location',
     'definition object includes definition text'
   );
   assert.equal(
-    definition.examples,
+    meanings[0].definitions[0].examples,
     ['Set the tray down'],
     'a definition can include an example (without delimiters)'
   );
   assert.equal(
-    definition.synonyms,
+    meanings[0].definitions[0].synonyms,
     ['put', 'place', 'pose', 'position', 'lay'],
     'a definition can include synonyms'
   );
@@ -182,6 +179,42 @@ test('wordWebOnline.getDefinitions() result includes related words when requeste
     'includes nearest.before when requested'
   );
   assert.ok(nearest.after.length > 0, 'includes nearest.after when requested');
+});
+
+test('wordWebOnline.getSynonyms() result has the expected shape', () => {
+  const $ = cheerio.load(setHtml);
+  const result = wordWebOnline.getSynonyms($, 'set', 'en');
+
+  assert.type(result.attribution, 'string', '.attribution is of type string');
+  assert.instance(result.synonyms, Array, '.synonyms is of type array');
+});
+
+test('wordWebOnline.getSynonyms() result includes attribution', () => {
+  const $ = cheerio.load(setHtml);
+  const result = wordWebOnline.getSynonyms($, 'set', 'en');
+  assert.ok(result.attribution);
+});
+
+test('wordWebOnline.getSynonyms() result includes expected synonyms', () => {
+  const $ = cheerio.load(setHtml);
+  const { synonyms } = wordWebOnline.getSynonyms($, 'set', 'en');
+
+  assert.ok(synonyms.length > 0, '"set" has at least one synonym');
+
+  const synonym = synonyms[0];
+
+  assert.is(synonym.synonym, 'put', 'synonym includes the synonym');
+  assert.is(
+    synonym.partOfSpeech,
+    'verb',
+    'synonym includes the part of speech'
+  );
+  assert.is(synonym.word, 'set', 'synonym includes the matching word');
+  assert.is(
+    synonym.definition,
+    'Cause to have a certain (possibly abstract) location',
+    'synonym includes definition'
+  );
 });
 
 test.run();

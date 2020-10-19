@@ -1,10 +1,10 @@
 import { Lookup } from '../types';
 
-export function attribution() {
+function attribution() {
   return 'Definitions from WordWebOnline';
 }
 
-export function url(word: string, language: string) {
+export function url(word: string, language: string, type: Lookup.Type) {
   // WordWeb Online expects the word with no spaces or non-alphanumeric
   // characters, in uppercase. E.g. 'united states' => 'UNITEDSTATES',
   // 'e-mail' => 'EMAIL', 'U.S.A' => 'USA'
@@ -12,7 +12,11 @@ export function url(word: string, language: string) {
   return `https://www.wordwebonline.com/${language.toLowerCase()}/${wordFormatted}`;
 }
 
-export function validate(html: string, word: string, language: string) {
+export function validateSourceResponse(
+  html: string,
+  word: string,
+  language: string
+) {
   // Validate that we're on a result page by checking that there's at least
   // one element with `CLASS="head"` (used at the beginning of meanings,
   // see `parseMeanings()` below for details)
@@ -60,6 +64,33 @@ export function getDefinitions(
     partOf,
     antonyms,
     nearest,
+  };
+}
+
+export function getSynonyms(
+  $: cheerio.Root,
+  word: string,
+  language: string
+): Lookup.SynonymsResult {
+  const meanings = parseMeanings($);
+  const synonyms: Lookup.Synonym[] = [];
+
+  for (const meaning of meanings) {
+    for (const definition of meaning.definitions) {
+      for (const synonym of definition.synonyms) {
+        synonyms.push({
+          definition: definition.definition,
+          partOfSpeech: meaning.partOfSpeech,
+          synonym: synonym,
+          word: meaning.word,
+        });
+      }
+    }
+  }
+
+  return {
+    attribution: attribution(),
+    synonyms,
   };
 }
 
@@ -188,22 +219,22 @@ function parseNearest($: cheerio.Root): Lookup.DefinitionsResult['nearest'] {
   };
 
   let readingBefore = true;
-  $(
-    '.rightSideBar .sideBarText a, .rightSideBar .sideBarText span'
-  ).each(function (_, el) {
-    // A <span> element holds the current term, so if we see it
-    // then we've finished processing the terms before
-    if (el.tagName === 'span') {
-      readingBefore = false;
-      return;
-    }
+  $('.rightSideBar .sideBarText a, .rightSideBar .sideBarText span').each(
+    function (_, el) {
+      // A <span> element holds the current term, so if we see it
+      // then we've finished processing the terms before
+      if (el.tagName === 'span') {
+        readingBefore = false;
+        return;
+      }
 
-    if (readingBefore) {
-      nearest.before.push($(el).text().trim());
-    } else {
-      nearest.after.push($(el).text().trim());
+      if (readingBefore) {
+        nearest.before.push($(el).text().trim());
+      } else {
+        nearest.after.push($(el).text().trim());
+      }
     }
-  });
+  );
 
   return nearest;
 }
@@ -228,7 +259,8 @@ function parseExamples(examplesText: string) {
 
 export const wordWebOnline: Lookup.SourceAdapter = {
   url,
-  validate,
+  validateSourceResponse,
   getDefinitions,
+  getSynonyms,
   attribution,
 };
