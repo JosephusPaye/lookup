@@ -16,7 +16,8 @@
   "scripts": {
     "build": "tsc",
     "test": "uvu -r esm tests/",
-    "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.js\" \"*.{js,json,md}\""
+    "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.js\" \"*.{js,json,md}\"",
+    "format:check": "prettier --list-different \"src/**/*.ts\" \"tests/**/*.js\" \"*.{js,json,md}\""
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.3",
@@ -26,8 +27,6 @@
     "@types/cheerio": "^0.22.22",
     "esm": "^3.2.25",
     "prettier": "^2.1.2",
-    "source-map-support": "^0.5.19",
-    "tsc-watch": "^4.2.9",
     "typescript": "^4.0.3",
     "uvu": "^0.3.4"
   },
