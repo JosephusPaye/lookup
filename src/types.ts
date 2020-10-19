@@ -5,6 +5,23 @@ export namespace Lookup {
   export type Source = 'wordWebOnline';
 
   /**
+   * Types of related words
+   */
+  export type Related =
+    | 'soundsLike'
+    | 'derivedForms'
+    | 'seeAlso'
+    | 'typeOf'
+    | 'partOf'
+    | 'antonyms'
+    | 'nearest';
+
+  /**
+   * The available languages
+   */
+  export type Language = 'en';
+
+  /**
    * The errors that could occur when looking up words.
    */
   export enum ErrorType {
@@ -32,6 +49,15 @@ export namespace Lookup {
      * Unable to extract the definitions from the source page
      */
     'EXTRACTION_FAILED' = 'EXTRACTION_FAILED',
+  }
+
+  /**
+   * A look up error.
+   */
+  export interface Error {
+    originalError?: any;
+    message?: string;
+    type: ErrorType;
   }
 
   /**
@@ -162,22 +188,8 @@ export namespace Lookup {
   }
 
   /**
-   * Types of related words
+   * An adapter that provides definitions and synonyms from an online source
    */
-  export type Related =
-    | 'soundsLike'
-    | 'derivedForms'
-    | 'seeAlso'
-    | 'typeOf'
-    | 'partOf'
-    | 'antonyms'
-    | 'nearest';
-
-  /**
-   * The available languages
-   */
-  export type Language = 'en';
-
   export interface SourceAdapter {
     /**
      * Get attribution for the source, for user-level display.
@@ -210,14 +222,5 @@ export namespace Lookup {
       language: string,
       includeRelated: Related[]
     ): DefinitionsResult;
-  }
-
-  /**
-   * A look up error.
-   */
-  export interface Error {
-    originalError?: any;
-    message?: string;
-    type: ErrorType;
   }
 }
