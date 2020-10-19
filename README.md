@@ -2,7 +2,7 @@
 
 ![Node.js CI](https://github.com/JosephusPaye/lookup/workflows/Node.js%20CI/badge.svg)
 
-📖 Lookup definitions and synonyms of words using online sources. Designed for use in Node.js (v8 and above).
+📖 Lookup definitions and synonyms of words using online sources. Designed for use in Node.js (v10 and above).
 
 This project is part of [#CreateWeekly](https://twitter.com/JosephusPaye/status/1214853295023411200), my attempt to create something new publicly every week in 2020.
 

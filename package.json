@@ -13,9 +13,6 @@
   "files": [
     "dist"
   ],
-  "engines": {
-    "node": ">=8.0.0"
-  },
   "scripts": {
     "build": "tsc",
     "test": "uvu -r esm tests/",
