@@ -103,7 +103,7 @@ export namespace Lookup {
   /**
    * A look up result
    */
-  export interface Result {
+  export interface DefinitionsResult {
     /**
      * Attribution for where the definitions are from
      */
@@ -173,6 +173,11 @@ export namespace Lookup {
     | 'antonyms'
     | 'nearest';
 
+  /**
+   * The available languages
+   */
+  export type Language = 'en';
+
   export interface SourceAdapter {
     /**
      * Get attribution for the source, for user-level display.
@@ -199,12 +204,12 @@ export namespace Lookup {
     /**
      * Parse the source HTML page to extract meanings using cheerio.
      */
-    parse(
+    getDefinitions(
       $html: cheerio.Root,
       word: string,
       language: string,
       includeRelated: Related[]
-    ): Result;
+    ): DefinitionsResult;
   }
 
   /**

@@ -43,9 +43,9 @@ test('wordWebOnline.url() creates and normalizes URL', () => {
   );
 });
 
-test('wordWebOnline.parse() result has the expected shape', () => {
+test('wordWebOnline.getDefinitions() result has the expected shape', () => {
   const $ = cheerio.load(setHtml);
-  const result = wordWebOnline.parse($, 'set', 'en', []);
+  const result = wordWebOnline.getDefinitions($, 'set', 'en', []);
 
   // .attribution
   assert.type(result.attribution, 'string', '.attribution is of type string');
@@ -85,17 +85,17 @@ test('wordWebOnline.parse() result has the expected shape', () => {
   );
 });
 
-test('wordWebOnline.parse() result includes attribution', () => {
+test('wordWebOnline.getDefinitions() result includes attribution', () => {
   const $ = cheerio.load(setHtml);
-  const result = wordWebOnline.parse($, 'set', 'en', []);
+  const result = wordWebOnline.getDefinitions($, 'set', 'en', []);
   assert.ok(result.attribution);
 });
 
-test('wordWebOnline.parse() result includes expected meanings', () => {
+test('wordWebOnline.getDefinitions() result includes expected meanings', () => {
   const $ = cheerio.load(setHtml);
-  const { meanings } = wordWebOnline.parse($, 'set', 'en', []);
+  const { meanings } = wordWebOnline.getDefinitions($, 'set', 'en', []);
 
-  // `set` has 4 distinct meanings: verb, noun, adjective, proper noun
+  // "set" has 4 distinct meanings: verb, noun, adjective, proper noun
   assert.is(meanings.length, 4, 'a word can have multiple distinct meanings');
 
   // Meaning
@@ -141,43 +141,42 @@ test('wordWebOnline.parse() result includes expected meanings', () => {
     'a definition can include synonyms'
   );
 
-  assert.equal(
-    meanings[1].forms,
-    [],
-    'noun meaning has no forms'
-  );
+  assert.equal(meanings[1].forms, [], 'noun meaning has no forms');
   assert.equal(
     meanings[1].definitions[0].examples,
     ['a set of books', 'a set of golf clubs', 'a set of teeth'],
     'a definition can include multiple examples (without delimiters)'
   );
-
 });
 
-test('wordWebOnline.parse() result includes related words when requested', () => {
+test('wordWebOnline.getDefinitions() result includes related words when requested', () => {
   const $ = cheerio.load(setHtml);
 
-  const { soundsLike } = wordWebOnline.parse($, 'set', 'en', ['soundsLike']);
+  const { soundsLike } = wordWebOnline.getDefinitions($, 'set', 'en', [
+    'soundsLike',
+  ]);
   assert.ok(soundsLike.length > 0, 'includes soundsLike when requested');
 
-  const { derivedForms } = wordWebOnline.parse($, 'set', 'en', [
+  const { derivedForms } = wordWebOnline.getDefinitions($, 'set', 'en', [
     'derivedForms',
   ]);
   assert.ok(derivedForms.length > 0, 'includes derivedForms when requested');
 
-  const { seeAlso } = wordWebOnline.parse($, 'set', 'en', ['seeAlso']);
+  const { seeAlso } = wordWebOnline.getDefinitions($, 'set', 'en', ['seeAlso']);
   assert.ok(seeAlso.length > 0, 'includes seeAlso when requested');
 
-  const { typeOf } = wordWebOnline.parse($, 'set', 'en', ['typeOf']);
+  const { typeOf } = wordWebOnline.getDefinitions($, 'set', 'en', ['typeOf']);
   assert.ok(typeOf.length > 0, 'includes typeOf when requested');
 
-  const { partOf } = wordWebOnline.parse($, 'set', 'en', ['partOf']);
+  const { partOf } = wordWebOnline.getDefinitions($, 'set', 'en', ['partOf']);
   assert.ok(partOf.length > 0, 'includes partOf when requested');
 
-  const { antonyms } = wordWebOnline.parse($, 'set', 'en', ['antonyms']);
+  const { antonyms } = wordWebOnline.getDefinitions($, 'set', 'en', [
+    'antonyms',
+  ]);
   assert.ok(antonyms.length > 0, 'includes antonyms when requested');
 
-  const { nearest } = wordWebOnline.parse($, 'set', 'en', ['nearest']);
+  const { nearest } = wordWebOnline.getDefinitions($, 'set', 'en', ['nearest']);
   assert.ok(
     nearest.before.length > 0,
     'includes nearest.before when requested'

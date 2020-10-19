@@ -2,6 +2,7 @@ import cheerio from 'cheerio';
 import { get } from 'httpie';
 
 import { Lookup } from './types';
+import { error } from './error';
 import { wordWebOnline } from './adapters/wordwebonline';
 
 export { Lookup };
@@ -9,28 +10,17 @@ export { Lookup };
 const adapters = new Map<Lookup.Source, Lookup.SourceAdapter>();
 adapters.set('wordWebOnline', wordWebOnline);
 
-export function error(
-  type: Lookup.ErrorType,
-  message?: string,
-  originalError?: any
-): Lookup.Error {
-  const err = new Error(message);
-  (err as any).type = type;
-  (err as any).originalError = originalError;
-  return (err as unknown) as Lookup.Error;
-}
-
-export async function lookUp(
+export async function definitions(
   word: string,
-  language: string,
   options: {
+    language?: Lookup.Language;
     source?: Lookup.Source;
     includeRelated?: Lookup.Related[];
   } = {}
 ) {
-  const { source, includeRelated } = Object.assign(
+  const { language, source, includeRelated } = Object.assign(
     {},
-    { source: 'wordWebOnline', includeRelated: ['antonyms'] },
+    { language: 'en', source: 'wordWebOnline', includeRelated: ['antonyms'] },
     options
   );
 
@@ -61,7 +51,7 @@ export async function lookUp(
   const $html = cheerio.load(html);
 
   try {
-    return sourceAdapter.parse($html, word, language, includeRelated);
+    return sourceAdapter.getDefinitions($html, word, language, includeRelated);
   } catch (err) {
     throw error(
       Lookup.ErrorType.EXTRACTION_FAILED,

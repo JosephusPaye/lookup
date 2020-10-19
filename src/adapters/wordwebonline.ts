@@ -19,12 +19,12 @@ export function validate(html: string, word: string, language: string) {
   return html.indexOf('CLASS="head"') !== -1;
 }
 
-export function parse(
+export function getDefinitions(
   $: cheerio.Root,
   word: string,
   language: string,
   includeRelated: Lookup.Related[]
-): Lookup.Result {
+): Lookup.DefinitionsResult {
   const meanings = parseMeanings($);
 
   const soundsLike = includeRelated.includes('soundsLike')
@@ -181,8 +181,8 @@ function parseRelated(
   return related;
 }
 
-function parseNearest($: cheerio.Root): Lookup.Result['nearest'] {
-  const nearest: Lookup.Result['nearest'] = {
+function parseNearest($: cheerio.Root): Lookup.DefinitionsResult['nearest'] {
+  const nearest: Lookup.DefinitionsResult['nearest'] = {
     before: [],
     after: [],
   };
@@ -229,6 +229,6 @@ function parseExamples(examplesText: string) {
 export const wordWebOnline: Lookup.SourceAdapter = {
   url,
   validate,
-  parse,
+  getDefinitions,
   attribution,
 };

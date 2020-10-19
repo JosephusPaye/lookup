@@ -1,12 +1,12 @@
 import { test } from 'uvu';
 import * as assert from 'uvu/assert';
 
-import { lookUp } from '../dist/main.js';
+import { definitions } from '../dist/main.js';
 import { wordWebOnline } from '../dist/adapters/wordwebonline.js';
 
-test('lookUp() throws `WORD_EMPTY` for an empty word', async () => {
+test('definitions() throws `WORD_EMPTY` for an empty word', async () => {
   try {
-    await lookUp('', 'en');
+    await definitions('');
     assert.not.ok(true, 'did not throw for empty word');
   } catch (err) {
     assert.ok(true, 'threw for empty word');
@@ -14,9 +14,9 @@ test('lookUp() throws `WORD_EMPTY` for an empty word', async () => {
   }
 });
 
-test('lookUp() throws `UNKNOWN_SOURCE` for an unknown source', async () => {
+test('definitions() throws `UNKNOWN_SOURCE` for an unknown source', async () => {
   try {
-    await lookUp('set', 'en', { source: 'fake' });
+    await definitions('set', { source: 'fake' });
     assert.not.ok(true, 'did not throw for unknown source');
   } catch (err) {
     assert.ok(true, 'threw for unknown source');
@@ -24,14 +24,14 @@ test('lookUp() throws `UNKNOWN_SOURCE` for an unknown source', async () => {
   }
 });
 
-test('lookUp() throws `SOURCE_REQUEST_FAILED` for error requesting source', async () => {
+test('definitions() throws `SOURCE_REQUEST_FAILED` for error requesting source', async () => {
   const url = wordWebOnline.url;
 
   wordWebOnline.url = () =>
     'http://this-is-an-invalid-url-to-test-an-http-error-when-requesting-the-source';
 
   try {
-    await lookUp('something', 'en');
+    await definitions('something');
     assert.not.ok(true, 'did not throw for request error');
   } catch (err) {
     assert.ok(true, 'threw for request error');
@@ -42,9 +42,9 @@ test('lookUp() throws `SOURCE_REQUEST_FAILED` for error requesting source', asyn
   wordWebOnline.url = url;
 });
 
-test('lookUp() throws `NOT_FOUND` for source HTML that fails adapter validation', async () => {
+test('definitions() throws `NOT_FOUND` for source HTML that fails adapter validation', async () => {
   try {
-    await lookUp('fakefakefakeword', 'en');
+    await definitions('fakefakefakeword');
     assert.not.ok(
       true,
       'did not throw for source HTML that fails adapter validation'
@@ -55,15 +55,15 @@ test('lookUp() throws `NOT_FOUND` for source HTML that fails adapter validation'
   }
 });
 
-test('lookUp() throws `EXTRACTION_FAILED` for an error during parsing', async () => {
-  const oldParse = wordWebOnline.parse;
+test('definitions() throws `EXTRACTION_FAILED` for an error during parsing', async () => {
+  const oldGetDefinitions = wordWebOnline.getDefinitions;
 
-  wordWebOnline.parse = () => {
+  wordWebOnline.getDefinitions = () => {
     throw Error('oops');
   };
 
   try {
-    await lookUp('word', 'en');
+    await definitions('word');
     assert.not.ok(true, 'did not throw for error during parsing');
   } catch (err) {
     assert.ok(true, 'threw for error during parsing');
@@ -71,11 +71,11 @@ test('lookUp() throws `EXTRACTION_FAILED` for an error during parsing', async ()
     assert.ok(err.originalError);
   }
 
-  wordWebOnline.parse = oldParse;
+  wordWebOnline.getDefinitions = oldGetDefinitions;
 });
 
-test('lookUp() includes only related antonyms by default', async () => {
-  const result = await lookUp('set', 'en');
+test('definitions() includes only related antonyms by default', async () => {
+  const result = await definitions('set');
 
   assert.is(result.soundsLike.length, 0);
   assert.is(result.derivedForms.length, 0);
@@ -88,8 +88,8 @@ test('lookUp() includes only related antonyms by default', async () => {
   assert.ok(result.antonyms.length > 0, '"set" has at least one antonym');
 });
 
-test('lookUp() includes related terms requested', async () => {
-  const result = await lookUp('set', 'en', {
+test('definitions() includes related terms requested', async () => {
+  const result = await definitions('set', {
     includeRelated: [
       'soundsLike',
       'derivedForms',
