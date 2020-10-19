@@ -2,7 +2,6 @@ import cheerio from 'cheerio';
 import { get } from 'httpie';
 
 import { Lookup } from './types';
-import { error } from './error';
 import { wordWebOnline } from './adapters/wordwebonline';
 
 export { Lookup };
@@ -81,4 +80,15 @@ async function fetchHtml(url: string, adapter: Lookup.SourceAdapter) {
       err
     );
   }
+}
+
+function error(
+  type: Lookup.ErrorType,
+  message?: string,
+  originalError?: any
+): Lookup.Error {
+  const err = new Error(message);
+  (err as any).type = type;
+  (err as any).originalError = originalError;
+  return (err as unknown) as Lookup.Error;
 }
