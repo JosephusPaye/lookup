@@ -7,6 +7,9 @@
   "repository": "https://github.com/JosephusPaye/lookup.git",
   "author": "Josephus Paye II",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
     "dist"
   ],
