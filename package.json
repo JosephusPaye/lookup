@@ -16,7 +16,8 @@
   "scripts": {
     "build": "tsc",
     "test": "uvu -r esm tests/",
-    "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.js\" \"*.{js,json,md}\""
+    "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.js\" \"*.{js,json,md}\"",
+    "prepublishOnly": "rm -rf dist && tsc"
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.3",
