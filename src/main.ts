@@ -6,6 +6,9 @@ import { wordWebOnline } from './adapters/wordwebonline';
 
 export { Lookup };
 
+/**
+ * Look up definitions and words related to the given word.
+ */
 export async function definitions(
   word: string,
   options: {
@@ -30,6 +33,9 @@ export async function definitions(
   }) as Promise<Lookup.DefinitionsResult>;
 }
 
+/**
+ * Look up synonyms of the given word.
+ */
 export async function synonyms(
   word: string,
   options: {
