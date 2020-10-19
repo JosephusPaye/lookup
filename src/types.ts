@@ -271,7 +271,7 @@ export namespace Lookup {
     getSynonyms(
       $html: cheerio.Root,
       word: string,
-      language: string,
+      language: string
     ): SynonymsResult;
   }
 }

@@ -85,7 +85,11 @@ test('synonyms() gets the synonyms of a word', async () => {
     'verb',
     'synonym includes the part of speech'
   );
-  assert.is(synonymsResult[0].word, 'set', 'synonym includes the matching word');
+  assert.is(
+    synonymsResult[0].word,
+    'set',
+    'synonym includes the matching word'
+  );
   assert.is(
     synonymsResult[0].definition,
     'Cause to have a certain (possibly abstract) location',

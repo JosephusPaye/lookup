@@ -3,11 +3,17 @@
   "version": "0.1.0",
   "description": "Lookup definitions and synonyms of words using online sources.",
   "main": "dist/main.js",
+  "types": "dist/main.d.ts",
   "repository": "https://github.com/JosephusPaye/lookup.git",
   "author": "Josephus Paye II",
   "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=8.0.0"
+  },
   "scripts": {
-    "dev": "tsc-watch --onSuccess \"node -r source-map-support/register dist/main.js\"",
     "build": "tsc",
     "test": "uvu -r esm tests/",
     "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.js\" \"*.{js,json,md}\""
