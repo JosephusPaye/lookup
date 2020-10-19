@@ -1,7 +1,7 @@
 import { Lookup } from '../types';
 
 function attribution() {
-  return 'Definitions from WordWebOnline';
+  return 'Definitions from WordWeb Online';
 }
 
 export function url(word: string, language: string, type: Lookup.Type) {

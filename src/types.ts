@@ -46,12 +46,12 @@ export namespace Lookup {
     'UNKNOWN_SOURCE' = 'UNKNOWN_SOURCE',
 
     /**
-     * The word was not found on the source page, perhaps the page format changed
+     * The given word was not found on the source page: perhaps the page format changed
      */
     'NOT_FOUND' = 'NOT_FOUND',
 
     /**
-     * Unable to extract the definitions from the source page
+     * Unable to extract the definitions or synonyms from the source page
      */
     'EXTRACTION_FAILED' = 'EXTRACTION_FAILED',
   }

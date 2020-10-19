@@ -1,6 +1,6 @@
 # Lookup
 
-📖 Lookup definitions and synonyms of words using online sources. Designed for Node.js.
+📖 Lookup definitions and synonyms of words using online sources. Designed for use in Node.js (v8 and above).
 
 This project is part of [#CreateWeekly](https://twitter.com/JosephusPaye/status/1214853295023411200), my attempt to create something new publicly every week in 2020.
 
@@ -44,7 +44,7 @@ And yields the following output when ran:
 
 ```js
 {
-  attribution: 'Definitions from WordWebOnline',
+  attribution: 'Definitions from WordWeb Online',
   meanings: [
     {
       word: 'map',
@@ -219,7 +219,7 @@ And yields the following output when ran:
 
 ```js
 {
-  attribution: 'Definitions from WordWebOnline',
+  attribution: 'Definitions from WordWeb Online',
   synonyms: [
     {
       definition: 'Temperamentally disinclined to talk',
@@ -293,16 +293,16 @@ async function synonyms(
 The following types are used for parameters and return values.
 
 ```ts
-export namespace Lookup {
+namespace Lookup {
   /**
    * The sources available for looking up words.
    */
-  export type Source = 'wordWebOnline';
+  type Source = 'wordWebOnline';
 
   /**
    * Types of related words
    */
-  export type Related =
+  type Related =
     | 'soundsLike'
     | 'derivedForms'
     | 'seeAlso'
@@ -314,12 +314,12 @@ export namespace Lookup {
   /**
    * The available languages
    */
-  export type Language = 'en';
+  type Language = 'en';
 
   /**
    * A definition
    */
-  export interface Definition {
+  interface Definition {
     /**
      * The definition text
      */
@@ -340,7 +340,7 @@ export namespace Lookup {
    * A meaning (sense). One word can have multiple meanings,
    * and each meaning can have multiple definitions.
    */
-  export interface Meaning {
+  interface Meaning {
     /**
      * The word with this meaning
      */
@@ -385,7 +385,7 @@ export namespace Lookup {
   /**
    * A definition result
    */
-  export interface DefinitionsResult {
+  interface DefinitionsResult {
     /**
      * Attribution for where the definitions are from
      */
@@ -446,7 +446,7 @@ export namespace Lookup {
   /**
    * A synonym result
    */
-  export interface Synonym {
+  interface Synonym {
     /**
      * The synonym
      */
@@ -468,7 +468,7 @@ export namespace Lookup {
     definition: string;
   }
 
-  export interface SynonymsResult {
+  interface SynonymsResult {
     /**
      * Attribution for where the definitions are from
      */
@@ -520,12 +520,12 @@ enum ErrorType {
   'UNKNOWN_SOURCE',
 
   /**
-   * The word was not found on the source page, perhaps the page format changed
+   * The given word was not found on the source page: perhaps the page format changed
    */
   'NOT_FOUND',
 
   /**
-   * Unable to extract the definitions from the source page
+   * Unable to extract the definitions or synonyms from the source page
    */
   'EXTRACTION_FAILED',
 }
