@@ -2,6 +2,7 @@ import cheerio from 'cheerio';
 import { get } from 'httpie';
 
 import { Lookup } from './types';
+import { SourceAdapter } from './adapters';
 import { wordWebOnline } from './adapters/wordwebonline';
 
 export { Lookup };
@@ -58,7 +59,7 @@ export async function synonyms(
   }) as Promise<Lookup.SynonymsResult>;
 }
 
-const adapters = new Map<Lookup.Source, Lookup.SourceAdapter>();
+const adapters = new Map<Lookup.Source, SourceAdapter>();
 adapters.set('wordWebOnline', wordWebOnline);
 
 async function lookup(

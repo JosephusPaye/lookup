@@ -1,3 +1,4 @@
+import { SourceAdapter } from '../adapters';
 import { Lookup } from '../types';
 
 function attribution() {
@@ -257,7 +258,7 @@ function parseExamples(examplesText: string) {
   return examples;
 }
 
-export const wordWebOnline: Lookup.SourceAdapter = {
+export const wordWebOnline: SourceAdapter = {
   url,
   validateSourceResponse,
   getDefinitions,
