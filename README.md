@@ -46,68 +46,91 @@ And yields the following output when ran:
 
 ```js
 {
-  attribution: 'Definitions from WordWeb Online',
-  meanings: [
+  "attribution": "Definitions from WordWeb Online",
+  "meanings": [
     {
-      word: 'map',
-      partOfSpeech: 'noun',
-      forms: [],
-      pronunciation: { text: 'map', key: '/a/ fat' },
-      definitions: [
+      "word": "map",
+      "partOfSpeech": "noun",
+      "forms": [],
+      "pronunciation": {
+        "text": "map",
+        "key": "/a/ fat"
+      },
+      "usage": [],
+      "definitions": [
         {
-          definition: "A diagrammatic representation of the earth's surface (or part of it)",
-          examples: [],
-          synonyms: []
+          "definition": "A diagrammatic representation of the earth's surface (or part of it)",
+          "examples": [],
+          "synonyms": []
         },
         {
-          definition: '(mathematics) a mathematical relation such that each element of a given set (the domain of the function) is associated with an element of another set (the range of the function)',
-          examples: [],
-          synonyms: [
-            'function',
-            'mathematical function',
-            'single-valued function',
-            'mapping'
+          "definition": "(mathematics) a mathematical relation such that each element of a given set (the domain of the function) is associated with an element of another set (the range of the function)",
+          "examples": [],
+          "synonyms": [
+            "function",
+            "mathematical function",
+            "single-valued function",
+            "mapping"
           ]
         }
       ]
     },
     {
-      word: 'map',
-      partOfSpeech: 'verb',
-      forms: [ 'mapped', 'mapping' ],
-      pronunciation: { text: 'map', key: '/a/ fat' },
-      definitions: [
+      "word": "map",
+      "partOfSpeech": "verb",
+      "forms": [
+        "mapped",
+        "mapping"
+      ],
+      "pronunciation": {
+        "text": "map",
+        "key": "/a/ fat"
+      },
+      "usage": [],
+      "definitions": [
         {
-          definition: 'Make a map of; show or establish the features or details of',
-          examples: [ 'map the surface of Venus' ],
-          synonyms: []
+          "definition": "Make a map of; show or establish the features or details of",
+          "examples": [
+            "map the surface of Venus"
+          ],
+          "synonyms": []
         },
         {
-          definition: 'Explore or survey for the purpose of making a map',
-          examples: [
+          "definition": "Explore or survey for the purpose of making a map",
+          "examples": [
             "We haven't even begun to map the many galaxies that we know exist"
           ],
-          synonyms: []
+          "synonyms": []
         },
         {
-          definition: 'Locate within a specific region of a chromosome in relation to known DNA or gene sequences',
-          examples: [ 'map the genes' ],
-          synonyms: []
+          "definition": "Locate within a specific region of a chromosome in relation to known DNA or gene sequences",
+          "examples": [
+            "map the genes"
+          ],
+          "synonyms": []
         },
         {
-          definition: 'Plan, delineate, or arrange in detail',
-          examples: [ "map one's future" ],
-          synonyms: [ 'map out' ]
+          "definition": "Plan, delineate, or arrange in detail",
+          "examples": [
+            "map one's future"
+          ],
+          "synonyms": [
+            "map out"
+          ]
         },
         {
-          definition: 'Depict as if on a map',
-          examples: [ "sorrow was mapped on the mother's face" ],
-          synonyms: []
+          "definition": "Depict as if on a map",
+          "examples": [
+            "sorrow was mapped on the mother's face"
+          ],
+          "synonyms": []
         },
         {
-          definition: 'To establish a mapping (of mathematical elements or sets)',
-          examples: [],
-          synonyms: [ 'represent' ]
+          "definition": "To establish a mapping (of mathematical elements or sets)",
+          "examples": [],
+          "synonyms": [
+            "represent"
+          ]
         }
       ]
     }
@@ -136,13 +159,13 @@ const lookup = require('@josephuspaye/lookup');
 
 async function main() {
   try {
-    const { derivedForms, partOf, nearest } = await lookup.definitions(
+    const { derivedForms, typeOf, nearest } = await lookup.definitions(
       'fiction',
       {
         includeRelated: ['derivedForms', 'typeOf', 'nearest'],
       }
     );
-    console.log({ derivedForms, partOf, nearest });
+    console.log({ derivedForms, typeOf, nearest });
   } catch (error) {
     console.log('unable to look up related words', error);
   }
@@ -158,36 +181,43 @@ And yields the following output when ran:
 
 ```js
 {
-  derivedForms: [ 'fictions' ],
-  typeOf: [
-    'creative thinking',
-    'creativeness',
-    'creativity',
-    'falsehood',
-    'falsity',
-    'literary composition',
-    'literary work',
-    'untruth'
+  "derivedForms": [
+    "fictions"
   ],
-  nearest: {
-    before: [
-      'fibular', 'fibular vein',
-      'FICA',    'fice',
-      'fiche',   'fichu',
-      'fickle',  'fickleness',
-      'fico',    'fictile'
+  "typeOf": [
+    "creative thinking",
+    "creativeness",
+    "creativity",
+    "falsehood",
+    "falsity",
+    "literary composition",
+    "literary work",
+    "untruth"
+  ],
+  "nearest": {
+    "before": [
+      "fibular",
+      "fibular vein",
+      "FICA",
+      "fice",
+      "fiche",
+      "fichu",
+      "fickle",
+      "fickleness",
+      "fico",
+      "fictile"
     ],
-    after: [
-      'fictional',
-      'fictional animal',
-      'fictional character',
-      'fictionalisation',
-      'fictionalise',
-      'fictionalization',
-      'fictionalize',
-      'fictitious',
-      'fictitious character',
-      'fictitious name'
+    "after": [
+      "fictional",
+      "fictional animal",
+      "fictional character",
+      "fictionalisation",
+      "fictionalise",
+      "fictionalization",
+      "fictionalize",
+      "fictitious",
+      "fictitious character",
+      "fictitious name"
     ]
   }
 }
@@ -361,7 +391,7 @@ namespace Lookup {
     /**
      * The pronunciation for this meaning
      */
-    pronunciation: {
+    pronunciation?: {
       /**
        * The pronunciation text
        */
@@ -376,6 +406,21 @@ namespace Lookup {
        * URL to an audio file with the pronunciation
        */
       audioUrl?: string;
+    };
+
+    /**
+     * The word's usage, e.g. ['vulgar'], ['archiac'], ['Brit', 'Cdn'], etc.
+     * An empty array indicates the word has no special usage, or its usage is universal.
+     */
+    usage: string[];
+
+    /**
+     * Alternative usage of the word if any. E.g. for 'colour', alternative usage is:
+     * `{ where: 'US', word: 'color' }`
+     */
+    usageAlternative?: {
+      where: string;
+      word: string;
     };
 
     /**
