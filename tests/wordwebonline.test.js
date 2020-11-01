@@ -16,6 +16,11 @@ const fableHtml = fs.readFileSync(
   'utf-8'
 );
 
+const rapMusicHtml = fs.readFileSync(
+  path.join(__dirname, 'rapmusic.wordwebonline.html'),
+  'utf-8'
+);
+
 test('wordWebOnline.url() creates and normalizes URL', () => {
   assert.is(
     wordWebOnline.url('reTicEnt', 'eN'),
@@ -253,6 +258,41 @@ test('wordWebOnline.getDefinitions() works for meanings marked "archaic"', () =>
   assert.is(
     meanings[1].definitions[0].definition,
     'Invent; speak of as true or real',
+    'definition object includes definition text'
+  );
+});
+
+// https://github.com/JosephusPaye/lookup/issues/2
+test.only('wordWebOnline.getDefinitions() works for meanings without a pronunciation', () => {
+  const $ = cheerio.load(rapMusicHtml);
+  const { meanings } = wordWebOnline.getDefinitions($, 'rap music', 'en', []);
+
+  assert.ok(meanings.length > 0, '"rap music" has at least one meaning');
+
+  assert.is(
+    meanings[0].word,
+    'rap music',
+    'meaning includes word spelt according to meaning'
+  );
+  assert.is(
+    meanings[0].partOfSpeech,
+    'noun',
+    'meaning includes part of speech'
+  );
+  assert.equal(meanings[0].forms, [], 'noun "rap music" has no forms');
+  assert.is(
+    meanings[0].pronunciation,
+    undefined,
+    'compound word "rap music" doesn\' include a pronunciation'
+  );
+  assert.ok(
+    meanings[0].definitions.length > 0,
+    'meaning includes at least one definition'
+  );
+
+  assert.is(
+    meanings[0].definitions[0].definition,
+    'Genre of African-American music of the 1980s and 1990s in which rhyming lyrics are chanted to a musical accompaniment; several forms of rap have emerged',
     'definition object includes definition text'
   );
 });
