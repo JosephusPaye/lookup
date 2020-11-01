@@ -126,6 +126,21 @@ export namespace Lookup {
     };
 
     /**
+     * The word's usage, e.g. ['vulgar'], ['archiac'], ['Brit', 'Cdn'], etc.
+     * An empty array indicates the word has no special usage, or its usage is universal.
+     */
+    usage: string[];
+
+    /**
+     * Alternative usage of the word if any. E.g. for 'colour', alternative usage is:
+     * `{ where: 'US', word: 'color' }`
+     */
+    usageAlternative?: {
+      where: string;
+      word: string;
+    };
+
+    /**
      * The definitions of the word with this meaning
      */
     definitions: Definition[];

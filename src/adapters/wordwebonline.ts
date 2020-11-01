@@ -128,7 +128,7 @@ function parseMeanings($: cheerio.Root): Lookup.Meaning[] {
     }
 
     // optional span.pron: the pronunciation key (e.g. `<span class="pron" title="Key: /I/ eye">rIz</span>`)
-    // find the nearest .pron without going past the next word (which is span.head)
+    // find the nearest .pron without going past the next word (which is .head)
     const pronunciationEl = $(head).nextUntil('.head').filter('.pron').first();
     const pronunciation =
       pronunciationEl.length > 0
@@ -137,6 +137,11 @@ function parseMeanings($: cheerio.Root): Lookup.Meaning[] {
             key: pronunciationEl.attr('title')?.trim().replace('Key: ', ''),
           }
         : undefined;
+
+    // optional span.use: the usage (e.g. `<span class="use">Usage: archaic</span>`)
+    // find the nearest .use without going past the next word (which is .head)
+    const usageEl = $(head).nextUntil('.head').filter('.use').first();
+    const { usage, usageAlternative } = parseUsage($, usageEl);
 
     // <ol> with definitions
     const definitionsEl = $(head).nextUntil('.head').filter('ol').first();
@@ -148,11 +153,50 @@ function parseMeanings($: cheerio.Root): Lookup.Meaning[] {
       partOfSpeech,
       forms,
       pronunciation,
+      usage,
+      usageAlternative,
       definitions,
     });
   }
 
   return meanings;
+}
+
+// https://regexr.com/5favg
+const usageRegex = /Usage: ([\w, ]+)(?:\((\w+): (\w+)\))?/g;
+
+function parseUsage($: cheerio.Root, usageEl: cheerio.Cheerio) {
+  const result: {
+    usage: string[];
+    usageAlternative: { where: string; word: string } | undefined;
+  } = {
+    usage: [],
+    usageAlternative: undefined,
+  };
+
+  if (usageEl.length == 0) {
+    return result;
+  }
+
+  const usageText = $(usageEl).text();
+  let match;
+
+  do {
+    match = usageRegex.exec(usageText);
+
+    if (match) {
+      result.usage = match[1].split(',').map((x) => x.trim());
+
+      if (match[2] && match[3]) {
+        result.usageAlternative = {
+          where: match[2],
+          word: match[3],
+        };
+      }
+    }
+  } while (match);
+
+  return result;
 }
 
 function parseDefinitions(

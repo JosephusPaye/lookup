@@ -7,17 +7,27 @@ import cheerio from 'cheerio';
 import { wordWebOnline } from '../dist/adapters/wordwebonline.js';
 
 const setHtml = fs.readFileSync(
-  path.join(__dirname, 'set.wordwebonline.html'),
+  path.join(__dirname, 'fixtures', 'set.wordwebonline.html'),
   'utf-8'
 );
 
 const fableHtml = fs.readFileSync(
-  path.join(__dirname, 'fable.wordwebonline.html'),
+  path.join(__dirname, 'fixtures', 'fable.wordwebonline.html'),
   'utf-8'
 );
 
 const rapMusicHtml = fs.readFileSync(
-  path.join(__dirname, 'rapmusic.wordwebonline.html'),
+  path.join(__dirname, 'fixtures', 'rapmusic.wordwebonline.html'),
+  'utf-8'
+);
+
+const colourHtml = fs.readFileSync(
+  path.join(__dirname, 'fixtures', 'colour.wordwebonline.html'),
+  'utf-8'
+);
+
+const barbieHtml = fs.readFileSync(
+  path.join(__dirname, 'fixtures', 'barbie.wordwebonline.html'),
   'utf-8'
 );
 
@@ -263,7 +273,7 @@ test('wordWebOnline.getDefinitions() works for meanings marked "archaic"', () =>
 });
 
 // https://github.com/JosephusPaye/lookup/issues/2
-test.only('wordWebOnline.getDefinitions() works for meanings without a pronunciation', () => {
+test('wordWebOnline.getDefinitions() works for meanings without a pronunciation', () => {
   const $ = cheerio.load(rapMusicHtml);
   const { meanings } = wordWebOnline.getDefinitions($, 'rap music', 'en', []);
 
@@ -295,6 +305,47 @@ test.only('wordWebOnline.getDefinitions() works for meanings without a pronuncia
     'Genre of African-American music of the 1980s and 1990s in which rhyming lyrics are chanted to a musical accompaniment; several forms of rap have emerged',
     'definition object includes definition text'
   );
+});
+
+test('wordWebOnline.getDefinitions() includes word usage and alternatives', () => {
+  let $ = cheerio.load(fableHtml);
+  let results = wordWebOnline.getDefinitions($, 'fable', 'en', []);
+
+  assert.ok(results.meanings.length > 0, '"fable" has at least one meaning');
+
+  assert.equal(
+    results.meanings[1].usage,
+    ['archaic'],
+    '"fable" has a meaning marked "archaic"'
+  );
+
+  $ = cheerio.load(colourHtml);
+  results = wordWebOnline.getDefinitions($, 'colour', 'en', []);
+
+  assert.ok(results.meanings.length > 0, '"colour" has at least one meaning');
+
+  assert.equal(
+    results.meanings[0].usage,
+    ['Brit', 'Cdn'],
+    '"colour" is used in Britain and Canada'
+  );
+  assert.equal(
+    results.meanings[0].usageAlternative,
+    { where: 'US', word: 'color' },
+    '"color" is the alternative usage in the US'
+  );
+
+  $ = cheerio.load(barbieHtml);
+  results = wordWebOnline.getDefinitions($, 'barbie', 'en', []);
+
+  assert.ok(results.meanings.length > 0, '"barbie" has at least one meaning');
+
+  assert.equal(
+    results.meanings[0].usage,
+    ['Brit', 'informal'],
+    '"barbie" is used in Britain and Canada'
+  );
+  assert.equal(results.meanings[0].usageAlternative, undefined);
 });
 
 test.run();
