@@ -239,11 +239,7 @@ test('wordWebOnline.getDefinitions() works for meanings marked "archaic"', () =>
     'verb',
     'meaning includes part of speech'
   );
-  assert.equal(
-    meanings[1].forms,
-    [],
-    'archaic verb "fable" has no forms'
-  );
+  assert.equal(meanings[1].forms, [], 'archaic verb "fable" has no forms');
   assert.equal(
     meanings[1].pronunciation,
     { text: 'fey-bul', key: '/ey/ day /u/ agree' },

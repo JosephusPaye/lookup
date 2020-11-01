@@ -130,10 +130,13 @@ function parseMeanings($: cheerio.Root): Lookup.Meaning[] {
     // optional span.pron: the pronunciation key (e.g. `<span class="pron" title="Key: /I/ eye">rIz</span>`)
     // find the nearest .pron without going past the next word (which is span.head)
     const pronunciationEl = $(head).nextUntil('.head').filter('.pron').first();
-    const pronunciation = pronunciationEl.length > 0 ? {
-      text: pronunciationEl.text().trim(),
-      key: pronunciationEl.attr('title')?.trim().replace('Key: ', ''),
-    } : undefined;
+    const pronunciation =
+      pronunciationEl.length > 0
+        ? {
+            text: pronunciationEl.text().trim(),
+            key: pronunciationEl.attr('title')?.trim().replace('Key: ', ''),
+          }
+        : undefined;
 
     // <ol> with definitions
     const definitionsEl = $(head).nextUntil('.head').filter('ol').first();
