@@ -108,7 +108,7 @@ export namespace Lookup {
     /**
      * The pronunciation for this meaning
      */
-    pronunciation: {
+    pronunciation?: {
       /**
        * The pronunciation text
        */

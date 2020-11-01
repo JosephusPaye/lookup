@@ -104,33 +104,39 @@ function parseMeanings($: cheerio.Root): Lookup.Meaning[] {
   const heads = $('#main-copy span.head').toArray();
 
   for (const head of heads) {
-    // `Verb:`
+    // span.head: the part of speech (e.g. `<span class="head">Verb:</span>`)
     const partOfSpeech = $(head).text().trim().replace(':', '').toLowerCase();
 
-    // ` rise`
-    const word = $(head.next).text().trim();
+    // span.key: the word (e.g. `<span class="key"> rise</span>`)
+    const wordEl = $(head).next('.key');
+    const word = wordEl.text().trim();
 
-    // ` (rose,risen)&nbsp;&nbsp;`
-    const formsText = $(head.next.next).text().trim();
+    // optional text node: the forms (e.g. ` (rose,risen)&nbsp;&nbsp;`)
+    const nextToWord = wordEl[0].next;
     let forms: string[] = [];
 
-    if (formsText) {
-      forms = formsText
-        .replace('(', '')
-        .replace(')', '')
-        .split(',')
-        .map((form) => form.trim());
+    if (nextToWord.type === 'text') {
+      const formsText = $(nextToWord).text().trim();
+
+      if (formsText) {
+        forms = formsText
+          .replace('(', '')
+          .replace(')', '')
+          .split(',')
+          .map((form) => form.trim());
+      }
     }
 
-    // `<span class="pron" title="Key: /I/ eye">rIz</span>`
-    const pronunciationEl = $(head.next.next.next);
-    const pronunciation = {
+    // optional span.pron: the pronunciation key (e.g. `<span class="pron" title="Key: /I/ eye">rIz</span>`)
+    // find the nearest .pron without going past the next word (which is span.head)
+    const pronunciationEl = $(head).nextUntil('.head').filter('.pron').first();
+    const pronunciation = pronunciationEl.length > 0 ? {
       text: pronunciationEl.text().trim(),
       key: pronunciationEl.attr('title')?.trim().replace('Key: ', ''),
-    };
+    } : undefined;
 
-    // <ol> with definitions is fourth sibling of head
-    const definitionsEl = $(head.next.next.next.next);
+    // <ol> with definitions
+    const definitionsEl = $(head).nextUntil('.head').filter('ol').first();
     const definitions = parseDefinitions($, definitionsEl);
 
     // Add the found meaning
@@ -142,6 +148,7 @@ function parseMeanings($: cheerio.Root): Lookup.Meaning[] {
       definitions,
     });
   }
+
   return meanings;
 }
 

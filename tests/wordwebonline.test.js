@@ -11,6 +11,11 @@ const setHtml = fs.readFileSync(
   'utf-8'
 );
 
+const fableHtml = fs.readFileSync(
+  path.join(__dirname, 'fable.wordwebonline.html'),
+  'utf-8'
+);
+
 test('wordWebOnline.url() creates and normalizes URL', () => {
   assert.is(
     wordWebOnline.url('reTicEnt', 'eN'),
@@ -214,6 +219,45 @@ test('wordWebOnline.getSynonyms() result includes expected synonyms', () => {
     synonym.definition,
     'Cause to have a certain (possibly abstract) location',
     'synonym includes definition'
+  );
+});
+
+// https://github.com/JosephusPaye/lookup/issues/1
+test('wordWebOnline.getDefinitions() works for meanings marked "archaic"', () => {
+  const $ = cheerio.load(fableHtml);
+  const { meanings } = wordWebOnline.getDefinitions($, 'fable', 'en', []);
+
+  assert.ok(meanings.length > 0, '"fable" has at least one meaning');
+
+  assert.is(
+    meanings[1].word,
+    'fable',
+    'meaning includes word spelt according to meaning'
+  );
+  assert.is(
+    meanings[1].partOfSpeech,
+    'verb',
+    'meaning includes part of speech'
+  );
+  assert.equal(
+    meanings[1].forms,
+    [],
+    'archaic verb "fable" has no forms'
+  );
+  assert.equal(
+    meanings[1].pronunciation,
+    { text: 'fey-bul', key: '/ey/ day /u/ agree' },
+    'meaning includes pronunciation key without label'
+  );
+  assert.ok(
+    meanings[1].definitions.length > 0,
+    'meaning includes at least one definition'
+  );
+
+  assert.is(
+    meanings[1].definitions[0].definition,
+    'Invent; speak of as true or real',
+    'definition object includes definition text'
   );
 });
 
