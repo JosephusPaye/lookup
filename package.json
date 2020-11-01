@@ -1,6 +1,6 @@
 {
   "name": "@josephuspaye/lookup",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Lookup definitions and synonyms of words using online sources.",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
